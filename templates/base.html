@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="" />
+    <title>Cargo Transport</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+
+</head>
+
+
+<body>
+
+
+    <header class="bg-blue-600 text-white py-4">
+        <nav class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold">CargoTransport</a>
+            <ul class="flex space-x-6">
+                <li><a href="/"         class="hover:text-gray-300">Home</a></li>
+                <li><a href="/services" class="hover:text-gray-300">Services</a></li>
+                <li><a href="/tracking" class="hover:text-gray-300">Track Shipment</a></li>
+                <li><a href="/quote"    class="hover:text-gray-300">Request a Quote</a></li>
+                <li><a href="/about"    class="hover:text-gray-300">About Us</a></li>
+                <li><a href="/contact"  class="hover:text-gray-300">Contact</a></li>
+                <li><a href="/login"    class="hover:text-gray-300">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <main>
+
+        {% block main %} {% endblock %}
+
+    </main>
+
+    <footer>
+    </footer>
+
+</body>

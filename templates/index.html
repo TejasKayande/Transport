@@ -1,0 +1,34 @@
+
+{% extends 'base.html' %}
+
+{% block main %}
+
+    <!-- Hero Section -->
+    <section class="bg-blue-800 text-white text-center py-24">
+        <h1 class="text-5xl font-bold mb-4">Reliable Cargo Transport Services</h1>
+        <p class="text-xl mb-6">Efficient, Fast, and Secure Logistics Solutions for Your Business</p>
+        <a href="/quote" class="bg-yellow-500 text-gray-800 px-6 py-3 rounded-full text-xl">Get a Quote</a>
+    </section>
+
+    <!-- Services Overview -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-6">Our Services</h2>
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="bg-white shadow-lg p-6 rounded-lg">
+                    <h3 class="text-2xl font-semibold mb-3">Domestic Shipping</h3>
+                    <p class="text-gray-600">Fast and affordable shipping options within the country.</p>
+                </div>
+                <div class="bg-white shadow-lg p-6 rounded-lg">
+                    <h3 class="text-2xl font-semibold mb-3">International Shipping</h3>
+                    <p class="text-gray-600">Global shipping services to every corner of the world.</p>
+                </div>
+                <div class="bg-white shadow-lg p-6 rounded-lg">
+                    <h3 class="text-2xl font-semibold mb-3">Expedited Delivery</h3>
+                    <p class="text-gray-600">For urgent shipments that require fast delivery.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
