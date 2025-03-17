@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-blue-600 text-white h-screen p-6">
+            <h2 class="text-2xl font-bold mb-8">Admin Panel</h2>
+            <ul class="space-y-4">
+                <li><a href="admin.html" class="hover:bg-blue-500 px-4 py-2 block rounded">Dashboard</a></li>
+                <li><a href="/manage-users" class="hover:bg-blue-500 px-4 py-2 block rounded">Manage Users</a></li>
+                <li><a href="/manage-orders" class="hover:bg-blue-500 px-4 py-2 block rounded">Manage Orders</a></li>
+                <li><a href="manage-shipments.html" class="hover:bg-blue-500 px-4 py-2 block rounded">Manage Shipments</a></li>
+                <li><a href="settings.html" class="hover:bg-blue-500 px-4 py-2 block rounded">Settings</a></li>
+                <li><a href="logout.html" class="hover:bg-blue-500 px-4 py-2 block rounded">Logout</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-grow p-6">
+            <!-- Header Section -->
+            <header class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-semibold text-gray-800">Admin Dashboard</h1>
+                <div class="text-gray-600">
+                    <span>Welcome, Admin</span>
+                    <button class="ml-4 text-blue-600 hover:underline">Logout</button>
+                </div>
+            </header>
+
+            <!-- Dashboard Cards Section - Taller Cards -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+                <div class="bg-white p-10 rounded-lg shadow-lg h-48 flex flex-col justify-center">
+                    <h3 class="text-xl font-semibold text-gray-800">Total Orders</h3>
+                    <p class="text-5xl font-bold text-blue-600">{{ total_orders }}</p>
+                </div>
+                <div class="bg-white p-10 rounded-lg shadow-lg h-48 flex flex-col justify-center">
+                    <h3 class="text-xl font-semibold text-gray-800">Total Shipments</h3>
+                    <p class="text-5xl font-bold text-blue-600">{{ total_shipments }}</p>
+                </div>
+                <div class="bg-white p-10 rounded-lg shadow-lg h-48 flex flex-col justify-center">
+                    <h3 class="text-xl font-semibold text-gray-800">Total Users</h3>
+                    <p class="text-5xl font-bold text-blue-600">{{ total_users }}</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+{% endblock %}

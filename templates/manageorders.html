@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class="container mx-auto px-6 py-8">
+    <h2 class="text-3xl font-semibold text-gray-800 mb-6">Manage Orders</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="bg-{{ 'red' if category == 'error' else 'green' }}-500 text-white p-4 rounded mb-4">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <table class="w-full bg-white border border-gray-300 shadow-lg rounded-lg">
+        <thead>
+            <tr class="bg-blue-600 text-white">
+                <th class="p-3 text-left">Order ID</th>
+                <th class="p-3 text-left">Client</th>
+                <th class="p-3 text-left">Shipment Type</th>
+                <th class="p-3 text-left">Weight</th>
+                <th class="p-3 text-left">Origin</th>
+                <th class="p-3 text-left">Destination</th>
+                <th class="p-3 text-left">Status</th>
+                <th class="p-3 text-left">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr class="border-t">
+                <td class="p-3">{{ order.id }}</td>
+                <td class="p-3">{{ order.client.name }}</td>
+                <td class="p-3">{{ order.shipment_type }}</td>
+                <td class="p-3">{{ order.weight }} kg</td>
+                <td class="p-3">{{ order.origin }}</td>
+                <td class="p-3">{{ order.destination }}</td>
+                <td class="p-3">{{ order.status }}</td>
+                <td class="p-3 flex gap-2">
+                    <!-- Update Status Form -->
+                    <form action="/manage-orders" method="POST" class="inline">
+                        <input type="hidden" name="order_id" value="{{ order.id }}">
+                        <select name="status" class="border rounded p-1">
+                            <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Shipped</option>
+                            <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                        </select>
+                        <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Update</button>
+                    </form>
+                    <!-- Delete Button -->
+                    <form action="/delete-order" method="POST" onsubmit="return confirm('Are you sure you want to delete this order?')">
+                        <input type="hidden" name="order_id" value="{{ order.id }}">
+                        <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

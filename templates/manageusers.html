@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+<div class="flex">
+    <!-- Sidebar -->
+    <div class="w-64 bg-blue-600 text-white h-screen p-6">
+        <h2 class="text-2xl font-bold mb-8">Admin Panel</h2>
+        <ul class="space-y-4">
+            <li><a href="/admin" class="hover:bg-blue-500 px-4 py-2 block rounded">Dashboard</a></li>
+            <li><a href="/manage-users" class="bg-blue-500 px-4 py-2 block rounded">Manage Users</a></li>
+            <li><a href="/manage-orders" class="hover:bg-blue-500 px-4 py-2 block rounded">Manage Orders</a></li>
+            <li><a href="/manage-shipments" class="hover:bg-blue-500 px-4 py-2 block rounded">Manage Shipments</a></li>
+            <li><a href="/settings" class="hover:bg-blue-500 px-4 py-2 block rounded">Settings</a></li>
+            <li><a href="/logout" class="hover:bg-blue-500 px-4 py-2 block rounded">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-grow p-6">
+        <h1 class="text-3xl font-semibold text-gray-800 mb-6">Manage Users</h1>
+
+        <!-- User Table -->
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <table class="w-full border-collapse border border-gray-300">
+                <thead class="bg-blue-600 text-white">
+                    <tr>
+                        <th class="p-3 border border-gray-300">ID</th>
+                        <th class="p-3 border border-gray-300">Name</th>
+                        <th class="p-3 border border-gray-300">Email</th>
+                        <th class="p-3 border border-gray-300">Role</th>
+                        <th class="p-3 border border-gray-300">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr class="text-center">
+                        <td class="p-3 border border-gray-300">{{ user.id }}</td>
+                        <td class="p-3 border border-gray-300">{{ user.name }}</td>
+                        <td class="p-3 border border-gray-300">{{ user.email }}</td>
+                        <td class="p-3 border border-gray-300">
+                            <form method="POST">
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <select name="new_role" class="border border-gray-300 px-2 py-1">
+                                    <option value="Admin" {% if user.role == 'Admin' %}selected{% endif %}>Admin</option>
+                                    <option value="Client" {% if user.role == 'Client' %}selected{% endif %}>Client</option>
+                                    <option value="Driver" {% if user.role == 'Driver' %}selected{% endif %}>Driver</option>
+                                </select>
+                                <button type="submit" name="action" value="update_role" class="ml-2 bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-400">
+                                    Update
+                                </button>
+                            </form>
+                        </td>
+                        <td class="p-3 border border-gray-300">
+                            <form method="POST">
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <button type="submit" name="action" value="delete" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
