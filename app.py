@@ -3,6 +3,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from datetime import datetime, timedelta
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Database.db'
 app.secret_key = 'a3f1b4e2d7c9a8735b1a93d8e0f2a7b6'
@@ -12,6 +14,7 @@ from models import Client
 from models import Driver
 from models import User
 from models import Order
+from models import Bid
 
 db.init_app(app)
 
@@ -27,6 +30,20 @@ def isRegistered():
             return False
         return True
     return False
+
+def close_expired_bids():
+    """Automatically selects the lowest bid and closes expired orders."""
+    expired_orders = Order.query.filter(Order.bidding_end_time <= datetime.utcnow(), Order.status == "pending").all()
+
+    for order in expired_orders:
+        if order.bids:
+            winning_bid = min(order.bids, key=lambda bid: bid.bid_price)
+            order.winning_bid_id = winning_bid.id
+            order.status = "closed"
+        else:
+            order.status = "expired"  # No bids were placed
+
+    db.session.commit()
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -176,6 +193,61 @@ def manage_users():
     return render_template("manageusers.html", users=users)
 
 
+@app.route("/biddings")
+def biddings():
+    if not isRegistered() or session.get('role') != "Driver":
+        flash("Only drivers can view bids!", "error")
+        return redirect('/')
+
+    close_expired_bids()
+
+    open_orders = Order.query.all()
+    return render_template("bidding.html", orders=open_orders)
+
+
+@app.route("/place_bid/<int:order_id>", methods=['GET', 'POST'])
+def place_bid(order_id):
+    if not isRegistered() or session.get('role') != "Driver":
+        flash("Only drivers can place bids!", "error")
+        return redirect('/')
+
+    order = Order.query.get(order_id)
+
+    if not order:
+        flash("Order not found!", "error")
+        return redirect(url_for('bidding'))
+
+    if order.bidding_end_time <= datetime.utcnow():
+        flash("Bidding for this order has ended!", "error")
+        return redirect(url_for('biddings'))
+
+    if request.method == 'POST':
+        bid_price = request.form['bid_price']
+        driver_id = session.get('user_id')
+
+        lowest_bid = db.session.query(db.func.min(Bid.bid_price)).filter(Bid.order_id == order_id).scalar()
+        if request.method == 'POST':
+            try:
+                bid_price = float(request.form['bid_price'])  # Convert input to float
+            except ValueError:
+                flash("Invalid bid amount! Please enter a valid number.", "error")
+
+                return redirect(url_for('place_bid', order_id=order_id))
+
+        if lowest_bid is not None and bid_price >= float(lowest_bid):
+            flash(f"Your bid must be lower than the current lowest bid: ${lowest_bid:.2f}", "error")
+            return redirect(url_for('place_bid', order_id=order_id))
+
+        new_bid = Bid(order_id=order_id, driver_id=driver_id, bid_price=bid_price)
+        db.session.add(new_bid)
+        db.session.commit()
+
+        flash("Your bid has been placed successfully!", "success")
+        return redirect(url_for('biddings'))
+
+    return render_template("place_bid.html", order=order)
+
+
 @app.route("/tracking")
 def tracking():
 
@@ -196,14 +268,17 @@ def quote():
 
         shipment_type = request.form['shipment_type']
         weight        = request.form['weight']
-        dimention     = request.form['dimensions']
+        dimension     = request.form['dimensions']
         origin        = request.form['origin']
         destination   = request.form['destination']
         note          = request.form['notes']
 
-        new_order = Order(user_id=session.get('user_id'), total_price=0.0, 
-                          shipment_type=shipment_type, weight=weight, dimention=dimention, 
-                          origin=origin, destination=destination, note=note)
+        bidding_end_time = datetime.utcnow() + timedelta(hours=24)
+
+        new_order = Order(client_id=session.get('user_id'), total_price=0.0, 
+                          shipment_type=shipment_type, weight=weight, dimension=dimension, 
+                          origin=origin, destination=destination, note=note, status="pending",
+                          bidding_end_time=bidding_end_time)
 
         db.session.add(new_order)
         db.session.commit()

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">Orders Available for Bidding</h1>
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <div class="mb-4">
+                {% for category, message in messages %}
+                    <div class="p-4 rounded text-white 
+                        {% if category == 'error' %} bg-red-500 {% elif category == 'success' %} bg-green-500 {% else %} bg-gray-500 {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% if orders %}
+        <table class="w-full border-collapse bg-white shadow-md rounded-lg">
+            <thead>
+                <tr class="bg-blue-500 text-white">
+                    <th class="p-4">Order ID</th>
+                    <th class="p-4">Origin</th>
+                    <th class="p-4">Destination</th>
+                    <th class="p-4">Weight (kg)</th>
+                    <th class="p-4">Bidding Ends In</th>
+                    <th class="p-4">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr class="border-t">
+                    <td class="p-4 text-center">{{ order.id }}</td>
+                    <td class="p-4 text-center">{{ order.origin }}</td>
+                    <td class="p-4 text-center">{{ order.destination }}</td>
+                    <td class="p-4 text-center">{{ order.weight }}</td>
+                    <td class="p-4 text-center">{{ order.bidding_end_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td class="p-4 text-center">
+                        <a href="{{ url_for('place_bid', order_id=order.id) }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Place Bid</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-gray-700 text-lg">No orders available for bidding at the moment.</p>
+    {% endif %}
+</div>
+{% endblock %}

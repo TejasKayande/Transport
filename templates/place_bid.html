@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">Place a Bid</h1>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <div class="mb-4">
+                {% for category, message in messages %}
+                    <div class="p-4 rounded text-white 
+                        {% if category == 'error' %} bg-red-500 {% elif category == 'success' %} bg-green-500 {% else %} bg-gray-500 {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Order Details -->
+    <div class="bg-white p-6 shadow-md rounded-lg mb-6">
+        <p><strong>Order ID:</strong> {{ order.id }}</p>
+        <p><strong>Origin:</strong> {{ order.origin }}</p>
+        <p><strong>Destination:</strong> {{ order.destination }}</p>
+        <p><strong>Weight:</strong> {{ order.weight }} kg</p>
+        <p><strong>Bidding Ends:</strong> {{ order.bidding_end_time.strftime('%Y-%m-%d %H:%M') }}</p>
+    </div>
+
+    <!-- Bid Form -->
+    <form method="POST" class="bg-gray-100 p-6 rounded-lg">
+        <label class="block mb-2 font-bold">Your Bid Amount ($):</label>
+        <input type="number" step="0.01" name="bid_price" required 
+            class="w-full p-2 border border-gray-300 rounded-lg">
+
+        <button type="submit" 
+            class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Place Bid
+        </button>
+    </form>
+</div>
+{% endblock %}
